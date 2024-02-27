@@ -1,14 +1,19 @@
 import { Card, CardContent, CardMedia, Container, Grid, TextField, Typography, CardActionArea } from "@mui/material";
 import { useEffect, useState } from "react";
+import emptyIcon from "../../asset/images/undraw_empty_re_opql.svg";
+import "./main.css"
 
 
 export default function Recipes() {
     const [recipes, setRecipes] = useState([]);
+    const [keyword, setKeyword] = useState(""); 
+
 
     const getRecipes = () => {
         // prepare URL
         const url = new URL("https://api.spoonacular.com/recipes/complexSearch");
-        url.searchParams.append('apiKey', '3a4c80e3196048f1b8f0f9805bccd813');
+        url.searchParams.append('apiKey', process.env.REACT_APP_SPOONACULAR_API_KEY);
+        url.searchParams.append('query', keyword);
         // fetch recipes from API
 
         fetch(url)
@@ -22,7 +27,7 @@ export default function Recipes() {
             })
     }
 
-    useEffect(getRecipes, []);
+    useEffect(getRecipes, [keyword]);
 
 
     return (
@@ -31,10 +36,12 @@ export default function Recipes() {
                 fullWidth
                 id="outlined-basic"
                 label="Enter a keyword to search recipes and hit Enter"
-                variant="outlined" />
+                variant="outlined"
+                onKeyDown={event => event.key=== 'Enter' &&
+                setKeyword(event.target.value)} />
 
             <Grid sx={{ mt: '1rem' }} container spacing={3}>
-                {recipes.map(recipe => (<Grid key={recipe.id} item xs={4}>
+                {recipes.length > 0 ? recipes.map(recipe => (<Grid key={recipe.id} item xs={4}>
                     <Card sx={{ maxWidth: 345, height:"100%"}}>
                         <CardActionArea sx={{height: "100%"}}>
                             <CardMedia
@@ -43,7 +50,7 @@ export default function Recipes() {
                                 image={recipe.image}
                                 alt={recipe.title}
                             />
-                            <CardContent sx={{height:"100"}}>
+                            <CardContent sx={{height: "100"}}>
                                 <Typography gutterBottom variant="h5" component="div">
                                    {recipe.title}
                                 </Typography>
@@ -51,7 +58,7 @@ export default function Recipes() {
                             </CardContent>
                         </CardActionArea>
                     </Card>
-                </Grid>))}
+                </Grid>)) : <img src={emptyIcon} width="50%" className="emptyIcon"/>}
             </Grid>
         </Container>
     );
