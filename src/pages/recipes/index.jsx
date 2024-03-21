@@ -15,7 +15,8 @@ export default function Recipes() {
     const getRecipes = () => {
         setLoading(true);
         // prepare URL
-        const url = new URL("https://api.spoonacular.com/recipes/complexSearch");
+        // const url = new URL("https://api.spoonacular.com/recipes/complexSearch");
+        const url = new URL("http://localhost:4000/recipes");
         url.searchParams.append('apiKey', process.env.REACT_APP_SPOONACULAR_API_KEY);
         url.searchParams.append('query', keyword);
         // fetch recipes from API
@@ -24,7 +25,8 @@ export default function Recipes() {
             .then(response => response.json())
             .then(data => {
                 // update the recipes state
-              setRecipes(data.results);
+              setRecipes(data);
+            //   setRecipes(data.results);
             })
             .catch(error => {
                 console.log(error)
